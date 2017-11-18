@@ -1,0 +1,30 @@
+<AssetManager>
+	<Font Name="Font" Path="App:Fnt.fnt" />
+	<Shader Name="FontShader" Path="Font"/>
+	<Shader Name="UITextureShader" Path="UITexture" />
+	<Shader Name="UIColorShader" Path="UIColor" />
+</AssetManager>
+<UIManager>
+	<Material Name="White" Color="#FFFFFFFF" />
+	<Material Name="BtnOver" Color="#AAAA" />
+	<Material Name="BtnDown" Color="#CCFF" />
+	<Material Name="BtnOff" Color="#00" />
+	<Style Name="FontS" Font="Font" Material="White" />
+	<Style Name="BtnStyle" DownMaterial="BtnDown" OverMaterial="BtnOver" Material="BtnOff" Flag="PAMC|LAMC" Size="x: 100%+10px y: 100%+10px" />
+	
+	<Component Name="LblBtn" LblStyle="FontS">
+		<Label Flag="PAMC|LAMC" Value="{Value}" Name="{LblName}" Style="{LblStyle}">
+			<Button Style="BtnStyle" Name="{BtnName}" />
+		</Label>
+	</Component>
+	
+	<Rect Name="GameRect" Flag="PAMC|LAMC|Invisible|IgnoreOverCounter" Size="x: 100% y: 100%">
+		<Label Name="GameScoreLbl" Flag="PATC|LATC" Value=" 0 | 0" Style="FontS" />
+		<LblBtn Flag="PABL|LABL" Value="Menu" BtnName="GameMenuBtn" />
+	</Rect>
+	<Rect Name="GameMenuRect" Flag="PAMC|LAMC|Invisible|IgnoreOverCounter" Size="x: 100% y: 100%">
+		<LblBtn Flag="PABL|LABL" Value="Back" BtnName="GameMenu_BackBtn" />
+		<LblBtn Flag="PAMC|LAMC" Value="Menu" BtnName="GameMenu_MenuBtn" />
+	</Rect>
+</UIManager>
+	
