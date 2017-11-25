@@ -2,6 +2,9 @@
 #define SERVERAPP_H
 #include <LWCore/LWTypes.h>
 #include <LWNetwork/LWProtocolManager.h>
+#include <LWEProtocols/LWEProtocolHTTP.h>
+#include <LWEProtocols/LWEProtocolHTTPS.h>
+#include <LWEProtocols/LWEProtocolTLS.h>
 #include "Protocol_WebSocket.h"
 
 class ServerApp {
@@ -11,6 +14,9 @@ public:
 		SocketPort=1034,
 
 		WebSocketID=0,
+		HttpProtocolID,
+		HttpsProtocolID,
+		TLSProtocolID,
 
 		Terminate=0x1
 	};
@@ -28,9 +34,12 @@ public:
 	~ServerApp();
 private:
 	LWProtocolManager m_ProtocolManager;
-	Protocol_WebSocket m_WebSocketProtocol;
+	LWEProtocolHttp m_HttpProtocol;
+	LWEProtocolHttps *m_HttpsProtocol;
+	//Protocol_WebSocket m_WebSocketProtocol;
 	LWAllocator &m_Allocator;
 	uint32_t m_Flag;
+	bool m_Sent = false;
 };
 
 #endif
