@@ -21,15 +21,9 @@
     <ClCompile Include="..\..\..\Source\Server\ServerApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Server\Protocol_WebSocket.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Server\ServerApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Include\Server\Protocol_WebSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

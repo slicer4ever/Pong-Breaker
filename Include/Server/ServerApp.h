@@ -5,7 +5,8 @@
 #include <LWEProtocols/LWEProtocolHTTP.h>
 #include <LWEProtocols/LWEProtocolHTTPS.h>
 #include <LWEProtocols/LWEProtocolTLS.h>
-#include "Protocol_WebSocket.h"
+#include <LWEProtocols/LWEProtocolWebSocket.h>
+#include <LWEProtocols/LWEProtocolWebSocketSecure.h>
 
 class ServerApp {
 public:
@@ -13,10 +14,12 @@ public:
 		WebSocketPort=1033,
 		SocketPort=1034,
 
-		WebSocketID=0,
+		WebProtocolID=0,
 		HttpProtocolID,
 		HttpsProtocolID,
 		TLSProtocolID,
+		WebSProtocolID,
+
 
 		Terminate=0x1
 	};
@@ -27,6 +30,8 @@ public:
 
 	ServerApp &Update(uint64_t lCurrentTime);
 
+	bool WebSockClosed(LWSocket &Socket, LWEWebSocket *WebSock, LWProtocolManager *Manager);
+
 	uint32_t GetFlag(void) const;
 	
 	ServerApp(LWAllocator &Allocator, LWAllocator &PacketSendAlloc, LWAllocator &PacketRecvAlloc);
@@ -36,7 +41,10 @@ private:
 	LWProtocolManager m_ProtocolManager;
 	LWEProtocolHttp m_HttpProtocol;
 	LWEProtocolHttps *m_HttpsProtocol;
-	//Protocol_WebSocket m_WebSocketProtocol;
+	LWEProtocolWebSocket *m_WebProtocol;
+	LWEProtocolWebSocketSecure *m_WebSecureProtocol;
+
+	LWEWebSocket *WebSocket;
 	LWAllocator &m_Allocator;
 	uint32_t m_Flag;
 	bool m_Sent = false;
