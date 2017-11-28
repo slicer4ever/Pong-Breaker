@@ -19,7 +19,9 @@ float App::Random(float Min, float Max) {
 }
 
 App &App::NetworkThread(uint64_t lCurrentTime){
-	if (!m_ServerClient) {
+	static bool FirstAttempt = false;
+	if (!m_ServerClient && !FirstAttempt) {
+		FirstAttempt = true;
 		LWSocket Sock;
 		uint32_t Err = LWSocket::CreateSocket(Sock, "Neonlightgames.com", LWPLATFORM_ID == LWPLATFORM_WEB ? WebSocketPort : GameSocketPort, LWSocket::Tcp, GameProtocolID);
 		if(Err){
@@ -35,7 +37,7 @@ App &App::NetworkThread(uint64_t lCurrentTime){
 		}
 		LWPacket *Ping = m_GameProtocol->CreatePacket<LWPacket>(0, nullptr, GameProtocol::PingPacketID, 0);
 		m_GameProtocol->PushOutPacket(Ping, m_ServerClient);
-	}
+	} else if (!m_ServerClient) return *this;
 	if (!m_ProtocolManager->Poll(0)) {
 		std::cout << "Error polling socket." << std::endl;
 		return *this;

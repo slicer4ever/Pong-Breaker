@@ -33,13 +33,13 @@
     <ClCompile Include="..\..\Source\C++11\State_Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Include\C++11\State_Game_AI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\C++11\State_Game_Network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\C++11\GameProtocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\C++11\State_Game_AI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

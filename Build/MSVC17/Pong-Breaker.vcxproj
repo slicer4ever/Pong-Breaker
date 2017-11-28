@@ -131,13 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Include\C++11\State_Game_AI.cpp" />
     <ClCompile Include="..\..\Source\C++11\App.cpp" />
     <ClCompile Include="..\..\Source\C++11\Game.cpp" />
     <ClCompile Include="..\..\Source\C++11\GameProtocol.cpp" />
     <ClCompile Include="..\..\Source\C++11\main.cpp" />
     <ClCompile Include="..\..\Source\C++11\Renderer.cpp" />
     <ClCompile Include="..\..\Source\C++11\State_Game.cpp" />
+    <ClCompile Include="..\..\Source\C++11\State_Game_AI.cpp" />
     <ClCompile Include="..\..\Source\C++11\State_Game_Network.cpp" />
     <ClCompile Include="..\..\Source\C++11\State_Menu.cpp" />
   </ItemGroup>
