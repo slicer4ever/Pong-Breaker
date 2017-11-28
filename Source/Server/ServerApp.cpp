@@ -71,7 +71,7 @@ bool ServerApp::WebSockClosed(LWSocket &Socket, LWEWebSocket *WebSock, LWProtoco
 	m_GameProtocol->SocketClosed(Socket, Manager);
 	return true;
 }
-
+#include <LWCore/LWCrypto.h>
 ServerApp::ServerApp(LWAllocator &Allocator, LWAllocator &PacketSendAlloc, LWAllocator &PacketRecvAlloc) : m_Allocator(Allocator), m_Flag(0) {
 	if (!LWProtocolManager::InitateNetwork()) {
 		std::cout << "Error starting network." << std::endl;
@@ -80,9 +80,9 @@ ServerApp::ServerApp(LWAllocator &Allocator, LWAllocator &PacketSendAlloc, LWAll
 	}
 	
 	m_ProtocolManager = m_Allocator.Allocate<LWProtocolManager>();
-	m_WebProtocol = m_Allocator.Allocate<LWEProtocolWebSocketSecure>(0, 1, m_Allocator, m_ProtocolManager, "App:realkey/fullchain.pem", "App:realkey/privkey.pem");
+	m_WebProtocol = m_Allocator.Allocate<LWEProtocolWebSocket>(0, m_Allocator, m_ProtocolManager);
 	m_WebProtocol->SetWebSocketClosedCallbackMethod(&ServerApp::WebSockClosed, this);
-
+	m_WebProtocol->SetSubProtocol("binary").SetServer("neonlightgames.com");
 	m_GameProtocol = m_Allocator.Allocate<GameProtocol>(GameProtocolID, m_Allocator, PacketRecvAlloc, PacketSendAlloc, std::bind(&ServerApp::SendPacket, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_ProtocolManager->RegisterProtocol(m_WebProtocol, WebProtocolID);
@@ -108,6 +108,18 @@ ServerApp::ServerApp(LWAllocator &Allocator, LWAllocator &PacketSendAlloc, LWAll
 
 	std::cout << "WebSocketSecure listening at: " << WebSListener->GetLocalPort() << std::endl;
 	std::cout << "GameProtocol listening at: " << GameListener->GetLocalPort() << std::endl;
+
+	char Hashed[256];
+	char Buf[20];
+
+	char *Str = "RCD4KnTzJ3osYyu9hsORVw==258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+	LWCrypto::HashSHA1(Str, strlen(Str), Buf);
+	uint32_t *t = (uint32_t*)Buf;
+	for (uint32_t i = 0; i < 5; i++) t[i] = (t[i] & 0xFF) << 24 | (t[i] & 0xFF00) << 8 | (t[i] & 0xFF0000) >> 8 | (t[i] & 0xFF000000) >> 24;
+	uint32_t Len = LWCrypto::Base64Encode(Buf, 20, Hashed, 256);
+	Hashed[Len] = '\0';
+	std::cout << "'" << Hashed << "'" << std::endl;
+
 }
 
 ServerApp::~ServerApp() {

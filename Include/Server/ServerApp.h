@@ -36,7 +36,7 @@ public:
 	~ServerApp();
 private:
 	LWProtocolManager *m_ProtocolManager;
-	LWEProtocolWebSocketSecure *m_WebProtocol;
+	LWEProtocolWebSocket *m_WebProtocol;
 	GameProtocol *m_GameProtocol;
 	LWAllocator &m_Allocator;
 	uint32_t m_Flag;

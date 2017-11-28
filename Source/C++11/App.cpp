@@ -23,7 +23,7 @@ App &App::NetworkThread(uint64_t lCurrentTime){
 	if (!m_ServerClient && !FirstAttempt) {
 		FirstAttempt = true;
 		LWSocket Sock;
-		uint32_t Err = LWSocket::CreateSocket(Sock, 0xC0A802FB, LWPLATFORM_ID == LWPLATFORM_WEB ? WebSocketPort : GameSocketPort, LWSocket::Tcp, GameProtocolID);
+		uint32_t Err = LWSocket::CreateSocket(Sock, "NeonLightGames.com", LWPLATFORM_ID == LWPLATFORM_WEB ? WebSocketPort : GameSocketPort, LWSocket::Tcp, GameProtocolID);
 		if(Err){
 			std::cout << "Error creating socket: " << Err << std::endl;
 			return *this;
