@@ -21,9 +21,15 @@
     <ClCompile Include="..\..\..\Source\Server\ServerApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\C++11\GameProtocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Server\ServerApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\C++11\GameProtocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

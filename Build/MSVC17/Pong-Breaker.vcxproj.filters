@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\Source\C++11\State_Game_Network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\C++11\GameProtocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\C++11\App.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\C++11\State_Game_Network.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\C++11\GameProtocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

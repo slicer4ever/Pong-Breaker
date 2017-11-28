@@ -3,6 +3,8 @@
 #include <LWPlatform/LWVideoMode.h>
 #include <LWVideo/LWVideoDriver.h>
 #include <LWPlatform/LWFileStream.h>
+#include <LWNetwork/LWPacketManager.h>
+#include <LWNetwork/LWPacket.h>
 #include <LWEAsset.h>
 #include <LWEUIManager.h>
 #include "Renderer.h"
@@ -14,6 +16,60 @@
 float App::Random(float Min, float Max) {
 	float v = (float)(m_RandGen() % 100000) / 100000.0f;
 	return Min + (Max - Min)*v;
+}
+
+App &App::NetworkThread(uint64_t lCurrentTime){
+	if (!m_ServerClient) {
+		LWSocket Sock;
+		uint32_t Err = LWSocket::CreateSocket(Sock, "Neonlightgames.com", LWPLATFORM_ID == LWPLATFORM_WEB ? WebSocketPort : GameSocketPort, LWSocket::Tcp, GameProtocolID);
+		if(Err){
+			std::cout << "Error creating socket: " << Err << std::endl;
+			return *this;
+		}
+		m_ServerClient = m_GameProtocol->GetGameClient(Sock.GetRemoteIP(), Sock.GetRemotePort());
+		m_ServerClient->m_Socket = m_ProtocolManager->PushSocket(Sock);
+		if(!m_ServerClient->m_Socket){
+			std::cout << "Error inserting socket." << std::endl;
+			m_ServerClient = nullptr;
+			return *this;
+		}
+		LWPacket *Ping = m_GameProtocol->CreatePacket<LWPacket>(0, nullptr, GameProtocol::PingPacketID, 0);
+		m_GameProtocol->PushOutPacket(Ping, m_ServerClient);
+	}
+	if (!m_ProtocolManager->Poll(0)) {
+		std::cout << "Error polling socket." << std::endl;
+		return *this;
+	}
+	if(!m_GameProtocol->ProcessOutPackets(lCurrentTime)){
+		std::cout << "Error processing out packets." << std::endl;
+		return *this;
+	}
+	return *this;
+}
+
+bool App::SendPacket(LWPacket *Packet, LWPacketManager *PacketManager){
+	char Buffer[1024 * 256];
+	GameClient *Cli = (GameClient*)Packet->GetClient();
+	if(!Cli){
+		std::cout << "No client to send." << std::endl;
+		return true;
+	}
+	if(!Cli->m_Socket){
+		std::cout << "No socket to send to." << std::endl;
+		return true;
+	}
+	uint32_t BufferLen = PacketManager->SerializePacket(Packet, Buffer, sizeof(Buffer));
+	uint32_t o = 0;
+	
+	while (o != BufferLen) {
+		uint32_t Res = Cli->m_Socket->Send(Buffer + o, BufferLen - o);
+		if (Res == -1) {
+			std::cout << "Error sending to socket." << std::endl;
+			return true;
+		}
+		o += Res;
+	}
+	return true;
 }
 
 App &App::UpdateThread(uint64_t lCurrentTime) {
@@ -104,7 +160,7 @@ LWWindow *App::GetWindow(void) {
 	return m_Window;
 }
 
-App::App(LWAllocator &Allocator) : m_Allocator(Allocator), m_Window(nullptr), m_Renderer(nullptr), m_AssetManager(nullptr), m_UIManager(nullptr), m_Flag(0), m_NextTick(LWTimer::GetCurrent()), m_FrameReady(false) {
+App::App(LWAllocator &Allocator, LWAllocator &InPacketAlloc, LWAllocator &OutPacketAlloc) : m_Allocator(Allocator), m_Window(nullptr), m_Renderer(nullptr), m_AssetManager(nullptr), m_UIManager(nullptr), m_Flag(0), m_NextTick(LWTimer::GetCurrent()), m_FrameReady(false), m_ServerClient(nullptr) {
 	std::seed_seq sd = { LWTimer::GetCurrent() };
 	m_RandGen.seed(sd);
 	LWVideoMode Current = LWVideoMode::GetActiveMode();
@@ -143,6 +199,11 @@ App::App(LWAllocator &Allocator) : m_Allocator(Allocator), m_Window(nullptr), m_
 	}
 	m_Renderer = m_Allocator.Allocate<Renderer>(Driver, m_AssetManager, m_Allocator);
 
+	m_GameProtocol = m_Allocator.Allocate<GameProtocol>(GameProtocolID, m_Allocator, InPacketAlloc, OutPacketAlloc, std::bind(&App::SendPacket, this, std::placeholders::_1, std::placeholders::_2));
+	
+	m_ProtocolManager = m_Allocator.Allocate<LWProtocolManager>();
+	m_ProtocolManager->RegisterProtocol(m_GameProtocol, GameProtocolID);
+
 	m_States[State::Menu] = m_Allocator.Allocate<State_Menu>();
 	m_States[State::GameS] = m_Allocator.Allocate<State_Game>(m_UIManager, this);
 	m_States[State::GameAI] = m_Allocator.Allocate<State_Game_AI>(m_UIManager, this);
@@ -160,5 +221,7 @@ App::~App() {
 	LWAllocator::Destroy(m_AssetManager);
 	LWAllocator::Destroy(m_Renderer);
 	LWAllocator::Destroy(m_Window);
+	LWAllocator::Destroy(m_ProtocolManager);
+	LWAllocator::Destroy(m_GameProtocol);
 	LWProtocolManager::TerminateNetwork();
 }
