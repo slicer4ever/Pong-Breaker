@@ -19,6 +19,13 @@ Obj = $(Config)/$(PlatformTarget)/
 Src = ../../Source/
 
 Sources = $(Src)C++11/main.cpp
+Sources += $(Src)C++11/Game.cpp
+Sources += $(Src)C++11/GameProtocol.cpp
+Sources += $(Src)C++11/Renderer.cpp
+Sources += $(Src)C++11/State_Game.cpp
+Sources += $(Src)C++11/State_Game_Network.cpp
+Sources += $(Src)C++11/State_Game_AI.cpp
+Sources += $(Src)C++11/State_Menu.cpp
 all: Dirs $(Sources)
 	$(CC) $(EFlags) $(Sources) $(LibPath) $(Libs) $(ELibs) -o $(Target)$(TargetName).html
 Dirs:
